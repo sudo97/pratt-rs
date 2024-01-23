@@ -41,6 +41,8 @@ I would be surprised if there aren't any, I made it in one sit. Please open an i
 
 Also if you're a seasoned Rustacean think that some idioms or datastructures I used are not ideal, make an issue as well. This is very appreciated, because I was just going with compiler suggestion 45% of the time, other 45% I was using GPT-4, and the last 10% were just my vision on what would make this algorythm easily read.
 
-## TODO
+## ~~TODO~~
 
-I think I'll add brackets...
+~~I think I'll add brackets...~~
+
+Added

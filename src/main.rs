@@ -68,24 +68,29 @@ enum Token {
     Minus,
     Star,
     Slash,
+    LParen,
+    RParen,
 }
 
-fn main() {
-    let inp = vec![
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Minus,
-        Token::Number(1),
-        Token::Plus,
-        Token::Number(10),
-        Token::Slash,
-        Token::Number(2),
-    ]; // 2 + 2 * 2 - 1 + 10 / 2
+fn beautify(program: Vec<Token>) -> String {
+    let mut res = String::new();
+    for token in program {
+        match token {
+            Token::Number(n) => res.push_str(&format!("{} ", n)),
+            Token::Plus => res.push_str("+ "),
+            Token::Minus => res.push_str("- "),
+            Token::Star => res.push_str("* "),
+            Token::Slash => res.push_str("/ "),
+            Token::LParen => res.push_str("( "),
+            Token::RParen => res.push_str(") "),
+        }
+    }
+    res
+}
 
-    if let Some(program) = Parser::new(inp).parse_expression(0) {
+fn test_program(input: Vec<Token>, expected: i64) {
+    println!("program: {}", beautify(input.clone()));
+    if let Some(program) = Parser::new(input).parse_expression(0) {
         println!("Bytecode: {:?}", program);
 
         let mut mem = Mem::new();
@@ -94,10 +99,125 @@ fn main() {
 
         if let Some(res) = mem.top() {
             println!("Result: {}", res);
+            println!("Expected: {}", expected);
         } else {
             println!("Error, stack empty");
         }
     } else {
         println!("Error, unable to parse");
     }
+}
+
+fn main() {
+    let prog = vec![
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+    ];
+
+    test_program(prog, 2 + 2 * 2);
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+    ];
+
+    test_program(prog, 2 * 2 + 2);
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Number(2),
+        Token::Star,
+        Token::LParen,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::RParen,
+    ];
+
+    test_program(prog, 2 * (2 + 2));
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Number(2),
+        Token::Star,
+        Token::LParen,
+        Token::Number(2),
+        Token::RParen,
+        Token::Plus,
+        Token::Number(2),
+    ];
+
+    test_program(prog, 2 * (2) + 2);
+
+    println!("=====");
+
+    let prog = vec![
+        Token::LParen,
+        Token::Number(2),
+        Token::RParen,
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+    ];
+
+    test_program(prog, (2) * 2 + 2);
+
+    println!("=====");
+
+    let prog = vec![
+        Token::LParen,
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::RParen,
+    ];
+
+    test_program(prog, (2 * 2 + 2));
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Minus,
+        Token::LParen,
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::RParen,
+    ];
+
+    test_program(prog, -(2 * 2 + 2));
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Minus,
+        Token::LParen,
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::RParen,
+        Token::Slash,
+        Token::Number(3),
+    ];
+
+    test_program(prog, -(2 * 2 + 2) / 3);
+
+    println!("=====");
 }

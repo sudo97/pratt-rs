@@ -8,8 +8,6 @@ type Expr = Vec<Op>;
 pub struct Parser {
     tokens: Vec<Token>,
     current: usize,
-    // prefix_parselets: HashMap<Token, fn(&mut Parser) -> Option<Expr>>,
-    // infix_parselets: HashMap<Token, fn(&mut Parser, Expr) -> Option<Expr>>,
 }
 
 impl Parser {
@@ -47,17 +45,22 @@ impl Parser {
 impl Token {
     fn precedence(&self) -> u8 {
         match self {
-            Token::Plus => 1,
-            Token::Minus => 1,
-            Token::Star => 2,
-            Token::Slash => 2,
-            _ => 0,
+            Token::Plus => 2,
+            Token::Minus => 2,
+            Token::Star => 3,
+            Token::Slash => 3,
+            Token::LParen => 1,
+            Token::RParen => 1,
+            Token::Number(_) => 0,
         }
     }
 
     fn prefix_parselets(self) -> Box<dyn Fn(&mut Parser) -> Option<Expr>> {
         match self {
-            Token::Number(n) => Box::new(move |_| Some(vec![Op::Push(n)])),
+            Token::Number(n) => Box::new(move |_| {
+                let expr = vec![Op::Push(n)];
+                Some(expr)
+            }),
             Token::Plus => Box::new(move |parser| {
                 let expr = parser.parse_expression(self.precedence())?;
                 Some(expr)
@@ -65,6 +68,10 @@ impl Token {
             Token::Minus => Box::new(move |parser| {
                 let mut expr = parser.parse_expression(self.precedence())?;
                 expr.push(Op::Negate);
+                Some(expr)
+            }),
+            Token::LParen => Box::new(move |parser| {
+                let expr = parser.parse_expression(self.precedence())?;
                 Some(expr)
             }),
             _ => Box::new(move |_| None),
@@ -97,7 +104,8 @@ impl Token {
                 expr.push(Op::Div);
                 Some(expr)
             }),
-            _ => Box::new(move |_, code| Some(code.to_vec())),
+            Token::RParen => Box::new(move |_, _| Some(vec![])),
+            _ => Box::new(move |_, _| None),
         }
     }
 }
