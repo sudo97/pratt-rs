@@ -112,164 +112,18 @@ fn test_program(input: Vec<Token>, expected: i64) {
 }
 
 fn main() {
-    let prog = vec![
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-    ];
+    to_test!(test_program, 2 + 2 * 2, 2 + 2 * 2);
+    to_test!(test_program, 2 * 2 + 2, 2 * 2 + 2);
+    to_test!(test_program, 2 * (2 + 2), 2 * lp 2 + 2 rp);
+    to_test!(test_program, 2 * (2) + 2, 2 * lp 2 rp + 2);
+    to_test!(test_program, 2 + (2) * 2, 2 + lp 2 rp * 2);
+    to_test!(test_program, (2) * 2 + 2, lp 2 rp * 2 + 2);
+    to_test!(test_program, (2 * 2 + 2), lp 2 * 2 + 2 rp);
+    to_test!(test_program, -(2 * 2 + 2), - lp 2 * 2 + 2 rp);
+    to_test!(test_program, -(2 * 2 + 2) / 3, - lp 2 * 2 + 2 rp / 3);
+    to_test!(test_program, 9 - (2 * 2 + 2) / 3, 9 - lp 2 * 2 + 2 rp / 3);
+    to_test!(test_program, 9 - 6 / 3, 9 - 6 / 3);
+    to_test!(test_program, 2 + (2 * 2), 2 + lp 2 * 2 rp);
 
-    test_program(prog, 2 + 2 * 2);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-    ];
-
-    test_program(prog, 2 * 2 + 2);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(2),
-        Token::Star,
-        Token::LParen,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::RParen,
-    ];
-
-    test_program(prog, 2 * (2 + 2));
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(2),
-        Token::Star,
-        Token::LParen,
-        Token::Number(2),
-        Token::RParen,
-        Token::Plus,
-        Token::Number(2),
-    ];
-
-    test_program(prog, 2 * (2) + 2);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(2),
-        Token::Plus,
-        Token::LParen,
-        Token::Number(2),
-        Token::RParen,
-        Token::Star,
-        Token::Number(2),
-    ];
-
-    test_program(prog, 2 + (2) * 2);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::LParen,
-        Token::Number(2),
-        Token::RParen,
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-    ];
-
-    test_program(prog, (2) * 2 + 2);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::LParen,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::RParen,
-    ];
-
-    test_program(prog, (2 * 2 + 2));
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Minus,
-        Token::LParen,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::RParen,
-    ];
-
-    test_program(prog, -(2 * 2 + 2));
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Minus,
-        Token::LParen,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::RParen,
-        Token::Slash,
-        Token::Number(3),
-    ];
-
-    test_program(prog, -(2 * 2 + 2) / 3);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(9),
-        Token::Minus,
-        Token::LParen,
-        Token::Number(2),
-        Token::Star,
-        Token::Number(2),
-        Token::Plus,
-        Token::Number(2),
-        Token::RParen,
-        Token::Slash,
-        Token::Number(3),
-    ];
-
-    test_program(prog, 9 - (2 * 2 + 2) / 3);
-
-    println!("=====");
-
-    let prog = vec![
-        Token::Number(9),
-        Token::Minus,
-        Token::Number(6),
-        Token::Slash,
-        Token::Number(3),
-    ];
-
-    test_program(prog, 9 - 6 / 3);
-
-    println!("=====");
-
-    let prog = vec![Token::Minus, Token::Plus];
-
-    test_program(prog, 0); // supposed to be an error, I am just passing number that doesn't mean anything
-    println!("=====");
+    to_test!(test_program, 0, - +); // should be error
 }

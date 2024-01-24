@@ -1,7 +1,4 @@
 macro_rules! to_token {
-    ($num:literal) => {
-        Token::Number($num)
-    };
     (+) => {
         Token::Plus
     };
@@ -14,22 +11,31 @@ macro_rules! to_token {
     (/) => {
         Token::Slash
     };
-    (() => {
+    ($num:literal) => {
+        Token::Number($num)
+    };
+    (lp) => {
         Token::LParen
     };
-    ()) => {
+    (rp) => {
         Token::RParen
     };
 }
 
 macro_rules! to_tokens {
-    ($f:ident, $($token:tt)+) => {
+    ($t:tt) => {to_token!($t)};
+    ($t:tt $($token:tt)+) => {
         {
-            let mut tokens = vec![];
-            $(
-                tokens.push(to_token!($token));
-            )+
-            $f(tokens, $($token)*);
+            vec![to_token!($t), $(to_token!($token)),+]
+        }
+    };
+}
+
+macro_rules! to_test {
+    ($f:ident, $e:expr, $($token:tt)+) => {
+        {
+            let tokens = to_tokens!($($token)+);
+            $f(tokens, $e);
             println!("=====");
         }
     };
