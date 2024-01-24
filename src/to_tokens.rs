@@ -1,42 +1,35 @@
-macro_rules! to_token {
-    (+) => {
-        Token::Plus
-    };
-    (-) => {
-        Token::Minus
-    };
-    (*) => {
-        Token::Star
-    };
-    (/) => {
-        Token::Slash
-    };
-    ("(") => {
-        Token::LParen
-    };
-    (")") => {
-        Token::RParen
-    };
-    ($num:literal) => {
-        Token::Number($num)
-    };
+macro_rules! to_tokens_impl {
+    (($($parsed:tt)*) + $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::Plus,) $($rest)*) };
+    (($($parsed:tt)*) - $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::Minus,) $($rest)*) };
+    (($($parsed:tt)*) * $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::Star,) $($rest)*) };
+    (($($parsed:tt)*) / $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::Slash,) $($rest)*) };
+    (($($parsed:tt)*) (rparen) $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::RParen,) $($rest)*) };
+    (($($parsed:tt)*) ($($inner:tt)*) $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::LParen,) $($inner)* (rparen) $($rest)*) };
+    (($($parsed:tt)*) $num:literal $($rest:tt)*) => { to_tokens_impl!(($($parsed)* Token::Number($num),) $($rest)*) };
+    (($($parsed:tt)*)) => { vec![$($parsed)*] };
 }
 
 macro_rules! to_tokens {
-    ($t:tt) => {to_token!($t)};
-    ($t:tt $($token:tt)+) => {
+    ($($tokens:tt)+) => {
+        to_tokens_impl!(() $($tokens)*)
+    };
+}
+
+macro_rules! to_test_inner {
+    ($f:ident, $tokens:expr, $($token:tt)+) => {
         {
-            vec![to_token!($t), $(to_token!($token)),+]
+            let result = ($($token)+);
+            $f($tokens, result);
+            println!("=====");
         }
     };
 }
 
 macro_rules! to_test {
-    ($f:ident, $e:expr, $($token:tt)+) => {
+    ($f:ident, $($token:tt)+) => {
         {
             let tokens = to_tokens!($($token)+);
-            $f(tokens, $e);
-            println!("=====");
+            to_test_inner!($f, tokens, $($token)+);
         }
     };
 }

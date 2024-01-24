@@ -112,18 +112,19 @@ fn test_program(input: Vec<Token>, expected: i64) {
 }
 
 fn main() {
-    to_test!(test_program, 2 + 2 * 2, 2 + 2 * 2);
-    to_test!(test_program, 2 * 2 + 2, 2 * 2 + 2);
-    to_test!(test_program, 2 * (2 + 2), 2 * "(" 2 + 2 ")");
-    to_test!(test_program, 2 * (2) + 2, 2 * "(" 2 ")" + 2);
-    to_test!(test_program, 2 + (2) * 2, 2 + "(" 2 ")" * 2);
-    to_test!(test_program, (2) * 2 + 2, "(" 2 ")" * 2 + 2);
-    to_test!(test_program, (2 * 2 + 2), "(" 2 * 2 + 2 ")");
-    to_test!(test_program, -(2 * 2 + 2), - "(" 2 * 2 + 2 ")");
-    to_test!(test_program, -(2 * 2 + 2) / 3, - "(" 2 * 2 + 2 ")" / 3);
-    to_test!(test_program, 9 - (2 * 2 + 2) / 3, 9 - "(" 2 * 2 + 2 ")" / 3);
-    to_test!(test_program, 9 - 6 / 3, 9 - 6 / 3);
-    to_test!(test_program, 2 + (2 * 2), 2 + "(" 2 * 2 ")");
+    to_test!(test_program, 2 + 2 * 2);
+    to_test!(test_program, 2 * 2 + 2);
+    to_test!(test_program, 2 * (2 + 2));
+    to_test!(test_program, 2 * (2) + 2);
+    to_test!(test_program, 2 + (2) * 2);
+    to_test!(test_program, (2) * 2 + 2);
+    to_test!(test_program, (2 * 2 + 2));
+    to_test!(test_program, -(2 * 2 + 2));
+    to_test!(test_program, -(2 * 2 + 2) / 3);
+    to_test!(test_program, 9 - (2 * 2 + 2) / 3);
+    to_test!(test_program, 9 - 6 / 3);
+    to_test!(test_program, 2 + (2 * 2));
 
-    to_test!(test_program, 0, - +); // should be error
+    let prog = to_tokens!(+ -);
+    test_program(prog, 0) // should be error
 }
