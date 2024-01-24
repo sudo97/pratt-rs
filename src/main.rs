@@ -3,6 +3,8 @@ use parser::Parser;
 struct Mem(Vec<i64>); // Memory of a stack machine
 
 mod parser;
+#[macro_use]
+mod to_tokens;
 
 #[derive(Debug, Clone)]
 enum Op {
@@ -100,6 +102,7 @@ fn test_program(input: Vec<Token>, expected: i64) {
         if let Some(res) = mem.top() {
             println!("Result: {}", res);
             println!("Expected: {}", expected);
+            // assert_eq!(res, expected);
         } else {
             println!("Error, stack empty");
         }
@@ -162,6 +165,20 @@ fn main() {
     println!("=====");
 
     let prog = vec![
+        Token::Number(2),
+        Token::Plus,
+        Token::LParen,
+        Token::Number(2),
+        Token::RParen,
+        Token::Star,
+        Token::Number(2),
+    ];
+
+    test_program(prog, 2 + (2) * 2);
+
+    println!("=====");
+
+    let prog = vec![
         Token::LParen,
         Token::Number(2),
         Token::RParen,
@@ -219,5 +236,40 @@ fn main() {
 
     test_program(prog, -(2 * 2 + 2) / 3);
 
+    println!("=====");
+
+    let prog = vec![
+        Token::Number(9),
+        Token::Minus,
+        Token::LParen,
+        Token::Number(2),
+        Token::Star,
+        Token::Number(2),
+        Token::Plus,
+        Token::Number(2),
+        Token::RParen,
+        Token::Slash,
+        Token::Number(3),
+    ];
+
+    test_program(prog, 9 - (2 * 2 + 2) / 3);
+
+    println!("=====");
+
+    let prog = vec![
+        Token::Number(9),
+        Token::Minus,
+        Token::Number(6),
+        Token::Slash,
+        Token::Number(3),
+    ];
+
+    test_program(prog, 9 - 6 / 3);
+
+    println!("=====");
+
+    let prog = vec![Token::Minus, Token::Plus];
+
+    test_program(prog, 0); // supposed to be an error, I am just passing number that doesn't mean anything
     println!("=====");
 }
