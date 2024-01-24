@@ -11,14 +11,14 @@ macro_rules! to_token {
     (/) => {
         Token::Slash
     };
-    ($num:literal) => {
-        Token::Number($num)
-    };
-    (lp) => {
+    ("(") => {
         Token::LParen
     };
-    (rp) => {
+    (")") => {
         Token::RParen
+    };
+    ($num:literal) => {
+        Token::Number($num)
     };
 }
 
