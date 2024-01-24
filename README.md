@@ -46,3 +46,42 @@ Also if you're a seasoned Rustacean think that some idioms or datastructures I u
 ~~I think I'll add brackets...~~
 
 Added
+
+## to_tokens macro
+
+After I added support for LParen and RParen, I realized it's painful to test things like so:
+```rust
+let prog = vec![Token::Number(2), Token::Plus, Token::Number(2)];
+```
+
+Imagine writing more complex expressions. So I decided trying to use rust macro system, which allows to traverse the stream of tokens(so I thought). I wanted to be able to write
+```rust
+let prog = to_tokens!(2 + 2); // and it would expand to the former call
+```
+
+then I wrapped it into another thing called `to_test` which also accepted function to call. Initially I wanted it to look like this:
+```rust
+to_test(test_program, 2 + 2);
+```
+But the problem is that Rust doesn't allow to match for `(` or `)` in the macros, so instead of parentheses I had to use some other characters instead. I settled with this:
+
+```rust
+macro_rules! to_token {
+    ...
+    ("(") => {
+        Token::LParen
+    };
+    (")") => {
+        Token::RParen
+    };
+    ...
+}
+```
+
+so now it looks like this:
+```rust
+    to_test!(test_program, 2 + 2 * 2, 2 + 2 * 2);
+    to_test!(test_program, 2 * (2 + 2), 2 * "(" 2 + 2 ")");
+```
+
+Not ideal, but better than it used to be. As always suggestions are welcome, maybe I don't know something
