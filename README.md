@@ -85,3 +85,5 @@ so now it looks like this:
 ```
 
 Not ideal, but better than it used to be. As always suggestions are welcome, maybe I don't know something
+
+UPD: thanks to [this reply](https://www.reddit.com/r/rust/comments/19eikn5/comment/kjdme3m/), I managed to make it work
